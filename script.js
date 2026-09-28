@@ -1,53 +1,103 @@
+/* NGANSA WEBSITE - script.js
+   Mobile menu + WhatsApp contact form
+*/
 
-document.addEventListener("DOMContentLoaded", function () {
+(function () {
+    "use strict";
 
-  // MOBILE MENU
-  const menuButton = document.querySelector(".menu-toggle");
-  const navMenu = document.querySelector("nav ul");
+    // MOBILE MENU
+    window.toggleMenu = function () {
+        const navLinks = document.querySelector(".nav-links");
 
-  if (menuButton && navMenu) {
-    menuButton.addEventListener("click", function () {
-      navMenu.classList.toggle("active");
+        if (!navLinks) return;
+
+        navLinks.classList.toggle("open");
+    };
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const navLinks = document.querySelector(".nav-links");
+        const menuButton = document.querySelector(".menu-btn");
+        const contactForm = document.getElementById("contactForm");
+
+        // Keep the button as ☰ Menu
+        if (menuButton) {
+            menuButton.textContent = "☰";
+            menuButton.setAttribute("aria-label", "Open navigation");
+        }
+
+        // Close menu when a link is clicked
+        if (navLinks) {
+            navLinks.querySelectorAll("a").forEach(function (link) {
+                link.addEventListener("click", function () {
+                    navLinks.classList.remove("open");
+                });
+            });
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener("click", function (event) {
+            if (!navLinks || !menuButton) return;
+
+            if (
+                navLinks.classList.contains("open") &&
+                !navLinks.contains(event.target) &&
+                !menuButton.contains(event.target)
+            ) {
+                navLinks.classList.remove("open");
+            }
+        });
+
+        // WHATSAPP CONTACT FORM
+        if (contactForm) {
+
+            contactForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                const name = document.getElementById("name");
+                const phone = document.getElementById("phone");
+                const service = document.getElementById("service");
+                const message = document.getElementById("message");
+
+                if (!name || !phone || !service || !message) {
+                    alert("Please complete the enquiry form.");
+                    return;
+                }
+
+                const nameValue = name.value.trim();
+                const phoneValue = phone.value.trim();
+                const serviceValue = service.value.trim();
+                const messageValue = message.value.trim();
+
+                if (!nameValue || !phoneValue || !messageValue) {
+                    alert(
+                        "Please fill in your name, phone number and project details."
+                    );
+                    return;
+                }
+
+                // NGANSA WhatsApp number
+                const whatsappNumber = "237677851448";
+
+                const whatsappMessage =
+                    "Hello NGANSA, I would like to make an enquiry.\n\n" +
+                    "Name: " + nameValue + "\n" +
+                    "Phone: " + phoneValue + "\n" +
+                    "Service needed: " + serviceValue + "\n" +
+                    "Project details: " + messageValue;
+
+                const whatsappURL =
+                    "https://wa.me/" +
+                    whatsappNumber +
+                    "?text=" +
+                    encodeURIComponent(whatsappMessage);
+
+                window.open(whatsappURL, "_blank");
+
+                contactForm.reset();
+            });
+        }
+
     });
-  }
 
-  // CLOSE MENU AFTER CLICKING A LINK
-  const navLinks = document.querySelectorAll("nav ul a");
-
-  navLinks.forEach(function (link) {
-    link.addEventListener("click", function () {
-      if (navMenu) {
-        navMenu.classList.remove("active");
-      }
-    });
-  });
-
-  // CONTACT FORM → WHATSAPP
-  const contactForm = document.querySelector("#contact-form");
-
-  if (contactForm) {
-    contactForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-
-      const name = document.querySelector("#name")?.value.trim() || "";
-      const email = document.querySelector("#email")?.value.trim() || "";
-      const phone = document.querySelector("#phone")?.value.trim() || "";
-      const message = document.querySelector("#message")?.value.trim() || "";
-
-      const whatsappNumber = "237677851448";
-
-      const whatsappMessage =
-        "Hello, I would like to make an inquiry.%0A%0A" +
-        "Name: " + encodeURIComponent(name) + "%0A" +
-        "Email: " + encodeURIComponent(email) + "%0A" +
-        "Phone: " + encodeURIComponent(phone) + "%0A" +
-        "Message: " + encodeURIComponent(message);
-
-      const whatsappURL =
-        "https://wa.me/" + whatsappNumber + "?text=" + whatsappMessage;
-
-      window.open(whatsappURL, "_blank");
-    });
-  }
-
-});
+})();
